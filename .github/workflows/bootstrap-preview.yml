@@ -16,28 +16,53 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate required project files
+      - name: Validate required pages and assets
         shell: bash
         run: |
           set -euo pipefail
           test -f index.html
+          test -f empresa/index.html
+          test -f equipe/index.html
+          test -f solucoes/index.html
+          test -f operacao/index.html
+          test -f cotacao/index.html
+          test -f contato/index.html
+          test -f trabalhe-conosco/index.html
+          test -f privacidade/index.html
+          test -f 404.html
+          test -f assets/site.css
+          test -f assets/site.js
+          test -f assets/brand/logo.svg
           test -f README.md
           test -f vercel.json
-          test -f favicon.svg
+          test -f robots.txt
 
-      - name: Validate institutional metadata
+      - name: Validate JavaScript
+        run: node --check assets/site.js
+
+      - name: Validate functional surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'data-live-form="quote"' cotacao/index.html
+          grep -q 'data-live-form="contact"' contato/index.html
+          grep -q 'data-live-form="career"' trabalhe-conosco/index.html
+          grep -q '5511978341558' assets/site.js
+          grep -q 'alcepereirafilhotransportes' assets/site.js
+
+      - name: Validate identity and ownership
         shell: bash
         run: |
           set -euo pipefail
           grep -q 'ALC & Pereira Filho Transportes' index.html
+          grep -q 'assets/brand/logo.svg' index.html
           grep -q 'Matheus Ferreira' index.html
           grep -q 'Matheus Ferreira' README.md
           grep -q 'X-Robots-Tag' vercel.json
 
-      - name: Validate preview content
+      - name: Validate no prototype copy remains
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'Movemos negócios' index.html
-          grep -q 'Solicitar cotação' index.html
-          grep -q 'Mídia provisória de homologação' index.html
+          ! grep -RniE 'homologação: nenhum dado|validação concluída|mockup|mídia provisória de homologação' \
+            --include='*.html' --include='*.js' .
