@@ -20,24 +20,54 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -f index.html
-          test -f README.md
-          test -f vercel.json
-          test -f favicon.svg
+          for f in \
+            index.html \
+            empresa/index.html \
+            equipe/index.html \
+            solucoes/index.html \
+            operacao/index.html \
+            cotacao/index.html \
+            contato/index.html \
+            trabalhe-conosco/index.html \
+            privacidade/index.html \
+            assets/site.css \
+            assets/sections.css \
+            assets/forms.css \
+            assets/responsive.css \
+            assets/site.js \
+            assets/brand/logo.svg \
+            favicon.svg \
+            robots.txt \
+            vercel.json; do
+            test -f "$f"
+          done
 
-      - name: Validate institutional metadata
+      - name: Validate institutional content
         shell: bash
         run: |
           set -euo pipefail
           grep -q 'ALC & Pereira Filho Transportes' index.html
+          grep -q 'Operação que' index.html
+          grep -q '48' operacao/index.html
+          grep -q 'Paulo H. Pereira Filho' equipe/index.html
+          grep -q 'André Luiz N. da Costa' equipe/index.html
+          grep -q 'data-live-form="quote"' cotacao/index.html
+          grep -q 'data-live-form="contact"' contato/index.html
+          grep -q 'data-live-form="career"' trabalhe-conosco/index.html
           grep -q 'Matheus Ferreira' index.html
-          grep -q 'Matheus Ferreira' README.md
           grep -q 'X-Robots-Tag' vercel.json
 
-      - name: Validate preview content
+      - name: Reject forbidden or placeholder content
         shell: bash
         run: |
           set -euo pipefail
-          grep -q 'Movemos negócios' index.html
-          grep -q 'Solicitar cotação' index.html
-          grep -q 'Mídia provisória de homologação' index.html
+          if grep -RniEi 'lovable|generated project|mockup|mídia provisória de homologação|formulário de homologação' --include='*.html' --include='*.js' --include='*.css' .; then
+            echo 'Forbidden or placeholder content detected.' >&2
+            exit 1
+          fi
+
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check assets/site.js
