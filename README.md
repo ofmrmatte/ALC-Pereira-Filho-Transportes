@@ -1,40 +1,62 @@
 # ALC & Pereira Filho Transportes
 
-Site institucional da ALC & Pereira Filho Transportes.
+Novo site institucional multipágina da ALC & Pereira Filho Transportes.
 
-> Projeto em homologação. O domínio institucional atual permanece inalterado até a aprovação final desta nova versão.
+> Projeto em homologação. O domínio institucional atual permanece inalterado até a aprovação final.
 
 ## Preview
 
 https://alc-pereira-filho-preview.vercel.app
 
-## Status
+## Arquitetura institucional
 
-A base atual concentra a nova direção visual e a estrutura da Home. O foco desta etapa é validar identidade, hierarquia de conteúdo, responsividade e experiência antes de conectar integrações e substituir as mídias provisórias pelo material oficial da empresa.
+O projeto deixou de ser tratado como landing page. A Home funciona como porta de entrada e o conteúdo foi distribuído em áreas próprias:
 
-## Direção do projeto
+- `/` — Home institucional
+- `/empresa/` — história, Diretores André Costa e Paulo Filho, missão, visão e valores
+- `/equipe/` — diretoria e funcionários apresentados institucionalmente pela empresa
+- `/solucoes/` — serviços e frentes logísticas
+- `/operacao/` — operação, tecnologia, indicadores e segurança
+- `/trabalhe-conosco/` — carreiras e parceiros
+- `/cotacao/` — solicitação comercial
+- `/contato/` — canais e formulário institucional
 
-- identidade corporativa em off-white, grafite e vermelho;
-- experiência responsiva com tratamento de safe areas em dispositivos móveis;
-- comunicação voltada a transporte, logística nacional e operações dedicadas;
-- estrutura preparada para conteúdo institucional, soluções, operação, segmentos e cotação;
-- mídia de vídeo desacoplada do layout para troca rápida por vídeos oficiais da frota;
-- preview sem indexação por mecanismos de busca durante a homologação;
-- assinatura de desenvolvimento preservada no projeto e no site.
+## Direção visual
+
+- off-white, grafite e vermelho institucional;
+- vídeo no hero da Home como mídia de impacto, sem transformar o site em landing page;
+- páginas internas com hierarquia editorial própria;
+- responsividade e safe areas para dispositivos móveis;
+- vídeos provisórios desacoplados do layout para troca posterior por material oficial da frota;
+- preview bloqueado para indexação durante a homologação;
+- assinatura de desenvolvimento preservada.
+
+## Conteúdo institucional recuperado
+
+A nova página Empresa reaproveita e reorganiza a história pública existente da companhia, incluindo o início da ALC Transportes em 2015, a entrada de Paulo Henrique Pereira Filho em 2019, a expansão no e-commerce e as frentes de XPT, Middle Mile, Line Haul, logística reversa e Last Mile.
+
+A área de equipe também recupera os profissionais apresentados no site institucional atual. Antes da publicação definitiva, cargos e fotos devem ser validados pela direção/RH.
 
 ## Estrutura
 
 ```text
 .
-├── index.html            # Home e estilos da versão de homologação
-├── media.js              # Fontes de mídia provisórias
-├── favicon.svg           # Ícone temporário da marca
-├── vercel.json           # Headers e configuração do deploy
-├── assets/               # Ponto de entrada para mídia oficial futura
+├── index.html
+├── empresa/index.html
+├── equipe/index.html
+├── solucoes/index.html
+├── operacao/index.html
+├── trabalhe-conosco/index.html
+├── cotacao/index.html
+├── contato/index.html
+├── assets/
+│   ├── site.css
+│   └── site.js
+├── media.js
+├── favicon.svg
+├── vercel.json
 ├── docs/
-│   ├── MEDIA.md          # Padrão para vídeos e imagens oficiais
-│   └── ROADMAP.md        # Próximas etapas da evolução do site
-├── CHANGELOG.md          # Histórico de evolução
+├── CHANGELOG.md
 └── README.md
 ```
 
@@ -46,15 +68,9 @@ O projeto atual é estático e não depende de build.
 python -m http.server 8080
 ```
 
-Depois, acesse `http://localhost:8080`.
-
 ## Mídia oficial
 
-Os vídeos usados nesta fase são apenas placeholders de homologação. A substituição deve ser feita em `media.js`, sem alterar a estrutura da página. Consulte `docs/MEDIA.md` antes de adicionar os arquivos definitivos.
-
-## Publicação
-
-A homologação deve continuar separada do domínio `alcepereirafilho.com.br` até a aprovação do conteúdo, das mídias, dos contatos e do formulário comercial.
+Os vídeos usados nesta fase são placeholders. A substituição deve ser feita em `media.js`. As fotografias de equipe atualmente referenciam o material público do site institucional existente e deverão ser migradas para arquivos próprios antes da troca definitiva do domínio.
 
 ## Responsável pelo desenvolvimento
 
