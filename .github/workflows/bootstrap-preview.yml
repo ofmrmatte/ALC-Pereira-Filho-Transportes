@@ -1,51 +1,43 @@
-name: Bootstrap preview source
+name: Validate institutional site
 
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/bootstrap-preview.yml'
-  workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  import-preview:
+  validate:
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Import current homologation HTML
+      - name: Validate required project files
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error --location \
-            https://alc-pereira-filho-preview.vercel.app \
-            --output index.html
+          test -f index.html
+          test -f README.md
+          test -f vercel.json
+          test -f favicon.svg
 
-          if grep -Eqi 'lovable|generated project|@lovable' index.html; then
-            echo 'Forbidden reference detected in imported HTML.' >&2
-            exit 1
-          fi
-
-          if ! grep -q 'Matheus Ferreira' index.html; then
-            echo 'Developer signature not found in imported HTML.' >&2
-            exit 1
-          fi
-
-      - name: Commit imported Home
+      - name: Validate institutional metadata
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          if git diff --cached --quiet; then
-            echo 'No changes to commit.'
-            exit 0
-          fi
-          git commit -m 'feat: adiciona home da homologacao'
-          git push
+          grep -q 'ALC & Pereira Filho Transportes' index.html
+          grep -q 'Matheus Ferreira' index.html
+          grep -q 'Matheus Ferreira' README.md
+          grep -q 'X-Robots-Tag' vercel.json
+
+      - name: Validate preview content
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'Movemos negócios' index.html
+          grep -q 'Solicitar cotação' index.html
+          grep -q 'Mídia provisória de homologação' index.html
