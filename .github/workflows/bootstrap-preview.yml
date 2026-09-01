@@ -1,0 +1,51 @@
+name: Bootstrap preview source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-preview:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Import current homologation HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location \
+            https://alc-pereira-filho-preview.vercel.app \
+            --output index.html
+
+          if grep -Eqi 'lovable|generated project|@lovable' index.html; then
+            echo 'Forbidden reference detected in imported HTML.' >&2
+            exit 1
+          fi
+
+          if ! grep -q 'Matheus Ferreira' index.html; then
+            echo 'Developer signature not found in imported HTML.' >&2
+            exit 1
+          fi
+
+      - name: Commit imported Home
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'No changes to commit.'
+            exit 0
+          fi
+          git commit -m 'feat: adiciona home da homologacao'
+          git push
