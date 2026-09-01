@@ -295,3 +295,10 @@
     reveal.forEach(el => el.classList.add('visible'));
   }
 })();
+
+(() => {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = '/assets/company-backgrounds.css?v=20260901-2';
+  document.head.appendChild(link);
+})();
