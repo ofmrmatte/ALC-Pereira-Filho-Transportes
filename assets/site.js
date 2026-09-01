@@ -17,17 +17,15 @@
     whatsapp: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12.04 2A9.84 9.84 0 0 0 3.6 16.9L2 22l5.24-1.54A9.96 9.96 0 1 0 12.04 2Zm0 17.95a8.03 8.03 0 0 1-4.1-1.12l-.3-.18-3.11.92.94-3.02-.2-.31a7.9 7.9 0 1 1 6.77 3.71Zm4.4-5.93c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19a7.18 7.18 0 0 1-1.34-1.66c-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg>'
   };
 
-  // Mantém as páginas internas visualmente sincronizadas mesmo após atualizações
-  // consecutivas do preview. A URL versionada força a revalidação do stylesheet.
-  const stylesheet = document.querySelector('link[rel="stylesheet"][href^="/assets/site.css"]');
-  if (stylesheet && !stylesheet.href.includes('v=20260901-3')) {
-    stylesheet.href = '/assets/site.css?v=20260901-3';
-  }
-
-  // Ajustes globais que devem ser idênticos em todas as páginas institucionais.
+  // Ajustes globais compartilhados por todas as páginas, sem recarregar o CSS.
   const globalFixes = document.createElement('style');
-  globalFixes.dataset.siteFixes = '20260901-3';
+  globalFixes.dataset.siteFixes = '20260901-4';
   globalFixes.textContent = `
+    @view-transition{navigation:auto}
+    ::view-transition-old(root){animation:site-out .12s ease both}
+    ::view-transition-new(root){animation:site-in .16s ease both}
+    @keyframes site-out{to{opacity:.94}}
+    @keyframes site-in{from{opacity:.94}}
     .page-index{line-height:1.85}
     .page-index>strong{display:block;margin:0 0 12px;color:var(--ink);font-size:.68rem;font-weight:800;letter-spacing:.14em;line-height:1.35}
     .icon-btn[data-whatsapp] svg,.social-link[data-whatsapp] svg,.sac-float[data-whatsapp] svg{width:18px;height:18px;display:block}
@@ -35,6 +33,7 @@
     .site-header .mobile-nav:not(.open){display:none!important}
     .footer-bottom .signature a{color:var(--ink);font-weight:800;text-decoration:none;transition:color .18s ease}
     .footer-bottom .signature a:hover{color:var(--brand)}
+    .org-summary{grid-template-columns:repeat(3,1fr)}
     @media(max-width:920px){.site-header .mobile-nav.open{display:flex!important}}
   `;
   document.head.appendChild(globalFixes);
@@ -56,7 +55,6 @@
     a.classList.toggle('active', match);
   });
 
-  // Garante que o menu móvel nunca apareça duplicado em desktop ou antes de abrir.
   if (mobileNav) mobileNav.hidden = true;
   if (menuButton && mobileNav) {
     menuButton.addEventListener('click', () => {
@@ -90,7 +88,6 @@
     if (a.matches('.icon-btn,.social-link,.sac-float')) a.innerHTML = icons.whatsapp;
   });
 
-  // Assinatura institucional única em todo o site.
   document.querySelectorAll('.signature').forEach(signature => {
     signature.innerHTML = `Desenvolvido por <a href="${CONFIG.portfolio}" target="_blank" rel="noopener noreferrer" aria-label="Portfólio ofmrmatte">ofmrmatte</a> • 2026`;
   });
@@ -99,6 +96,42 @@
     const subject = a.dataset.subject || 'Contato pelo site - ALC & Pereira Filho Transportes';
     a.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}`;
   });
+
+  // Pré-carrega páginas internas para reduzir a sensação de loading entre navegações.
+  const prefetched = new Set();
+  const prefetchPage = href => {
+    try {
+      const url = new URL(href, location.href);
+      if (url.origin !== location.origin || url.pathname === location.pathname || prefetched.has(url.pathname)) return;
+      if (/\.(pdf|zip|rar|jpg|jpeg|png|webp|svg)$/i.test(url.pathname)) return;
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = url.pathname + url.search;
+      link.as = 'document';
+      document.head.appendChild(link);
+      prefetched.add(url.pathname);
+    } catch (_) {}
+  };
+
+  const internalLinks = [...document.querySelectorAll('a[href]')].filter(a => {
+    try {
+      const url = new URL(a.href, location.href);
+      return url.origin === location.origin && !a.hasAttribute('download') && !a.target;
+    } catch (_) { return false; }
+  });
+
+  internalLinks.forEach(a => {
+    const prime = () => prefetchPage(a.href);
+    a.addEventListener('mouseenter', prime, { once: true, passive: true });
+    a.addEventListener('focus', prime, { once: true, passive: true });
+    a.addEventListener('touchstart', prime, { once: true, passive: true });
+  });
+
+  const warmNavigation = () => {
+    document.querySelectorAll('.nav-links a,.mobile-nav a,.btn[href^="/"],.mini-btn[href^="/"]').forEach(a => prefetchPage(a.href));
+  };
+  if ('requestIdleCallback' in window) requestIdleCallback(warmNavigation, { timeout: 1200 });
+  else setTimeout(warmNavigation, 350);
 
   const encodeForm = form => Object.fromEntries(new FormData(form).entries());
   const clean = value => String(value || '').trim();
@@ -183,15 +216,15 @@
     if (index === 0 && item.dataset.defaultOpen === 'true') openItem();
   });
 
-  const filterButtons = document.querySelectorAll('[data-team-filter]');
-  const people = document.querySelectorAll('[data-team-area]');
-  filterButtons.forEach(button => button.addEventListener('click', () => {
-    const filter = button.dataset.teamFilter;
-    filterButtons.forEach(b => b.classList.toggle('active', b === button));
-    people.forEach(person => {
-      person.hidden = filter !== 'todos' && person.dataset.teamArea !== filter;
-    });
-  }));
+  const filterButtons = [...document.querySelectorAll('[data-team-filter]')];
+  const people = [...document.querySelectorAll('[data-team-area]')];
+  const applyTeamFilter = filter => {
+    filterButtons.forEach(button => button.classList.toggle('active', button.dataset.teamFilter === filter));
+    people.forEach(person => { person.hidden = person.dataset.teamArea !== filter; });
+  };
+  filterButtons.forEach(button => button.addEventListener('click', () => applyTeamFilter(button.dataset.teamFilter)));
+  const initialTeamFilter = filterButtons.find(button => button.classList.contains('active')) || filterButtons[0];
+  if (initialTeamFilter) applyTeamFilter(initialTeamFilter.dataset.teamFilter);
 
   const reveal = document.querySelectorAll('[data-reveal]');
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
