@@ -19,7 +19,16 @@ O projeto deixou de ser tratado como landing page. A Home funciona como porta de
 - `/operacao/` — operação, tecnologia, indicadores e segurança
 - `/trabalhe-conosco/` — carreiras e parceiros
 - `/cotacao/` — solicitação comercial
-- `/contato/` — canais e formulário institucional
+- `/contato/` — canais, SAC, redes sociais e formulário institucional
+
+## Canais oficiais
+
+- Facebook: https://web.facebook.com/alcepereirafilhotransportes?_rdc=1&_rdr#
+- Instagram: https://www.instagram.com/alcepereirafilhotransportes
+- LinkedIn: https://www.linkedin.com/company/alcepereirafilhotransportes/posts/?feedView=all
+- SAC / WhatsApp: https://api.whatsapp.com/send/?phone=5511978341558&text&type=phone_number&app_absent=0
+
+Esses links são apresentados como botões institucionais no rodapé de todas as páginas. O SAC também possui atalho flutuante responsivo e destaque próprio na página de contato.
 
 ## Direção visual
 
@@ -51,6 +60,7 @@ A área de equipe também recupera os profissionais apresentados no site institu
 ├── contato/index.html
 ├── assets/
 │   ├── site.css
+│   ├── social.css
 │   └── site.js
 ├── media.js
 ├── favicon.svg
@@ -59,6 +69,16 @@ A área de equipe também recupera os profissionais apresentados no site institu
 ├── CHANGELOG.md
 └── README.md
 ```
+
+## Fluxo de publicação
+
+O repositório GitHub é a fonte única de verdade do projeto.
+
+```text
+GitHub main → integração automática da Vercel → preview
+```
+
+Durante a homologação não devem ser realizados deploys manuais sucessivos na Vercel. As alterações são feitas no GitHub e a Vercel apenas sincroniza o repositório conectado.
 
 ## Desenvolvimento local
 
