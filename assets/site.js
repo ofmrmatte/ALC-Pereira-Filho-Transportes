@@ -10,6 +10,24 @@
     }
   });
 
+  const COMPANY_MEDIA = Object.freeze({
+    '/empresa/': {
+      src: '/assets/images/frota/alc-frota-entardecer.jpg',
+      alt: 'Frota da ALC & Pereira Filho Transportes ao entardecer',
+      position: 'center 55%'
+    },
+    '/operacao/': {
+      src: '/assets/images/frota/alc-frota-patio.jpg',
+      alt: 'Frota operacional da ALC & Pereira Filho Transportes alinhada no pátio',
+      position: 'center 52%'
+    },
+    '/solucoes/': {
+      src: '/assets/images/frota/alc-frota-operacao.jpg',
+      alt: 'Caminhões da ALC & Pereira Filho Transportes em área de operação logística',
+      position: 'center 50%'
+    }
+  });
+
   const icons = {
     facebook: '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V4a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3V10H7.5v3h2.8v8h3.4Z"/></svg>',
     instagram: '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M8 3h8a5 5 0 0 1 5 5v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5Z"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.6" r="1" fill="currentColor"/></svg>',
@@ -18,7 +36,7 @@
   };
 
   const globalFixes = document.createElement('style');
-  globalFixes.dataset.siteFixes = '20260901-5';
+  globalFixes.dataset.siteFixes = '20260901-6';
   globalFixes.textContent = `
     @view-transition{navigation:auto}
     ::view-transition-old(root){animation:site-out .12s ease both}
@@ -33,7 +51,19 @@
     .footer-bottom .signature a{color:var(--ink);font-weight:800;text-decoration:none;transition:color .18s ease}
     .footer-bottom .signature a:hover{color:var(--brand)}
     .org-summary{grid-template-columns:repeat(3,1fr)}
-    @media(max-width:920px){.site-header .mobile-nav.open{display:flex!important}}
+    .page-media{margin:46px 0 0;border:1px solid var(--line);background:#e9e9e5;overflow:hidden;aspect-ratio:16/6;opacity:0;transform:translateY(8px);transition:opacity .3s ease,transform .3s ease}
+    .page-media.is-ready{opacity:1;transform:none}
+    .page-media img{width:100%;height:100%;object-fit:cover;object-position:var(--media-position,center);display:block}
+    @media(max-width:920px){
+      .site-header .mobile-nav.open{display:flex!important}
+      .page-media{margin-top:34px;aspect-ratio:16/8}
+    }
+    @media(max-width:640px){
+      .page-media{margin-top:28px;aspect-ratio:4/3}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .page-media{transition:none;transform:none}
+    }
   `;
   document.head.appendChild(globalFixes);
 
@@ -43,26 +73,29 @@
   const pathname = location.pathname.replace(/index\.html$/, '') || '/';
   const normalizedPath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
 
-  const PHOTO_PAGES = Object.freeze({
-    '/empresa/': { className: 'page-empresa', source: '/assets/images/empresa-frota-entardecer.webp.b64' },
-    '/operacao/': { className: 'page-operacao', source: '/assets/images/operacao-frota-alinhada.webp.b64' },
-    '/solucoes/': { className: 'page-solucoes', source: '/assets/images/solucoes-galpao-alc.webp.b64' }
-  });
-  const photoPage = PHOTO_PAGES[normalizedPath];
-  if (photoPage) {
-    const photoStyles = document.createElement('link');
-    photoStyles.rel = 'stylesheet';
-    photoStyles.href = '/assets/company-photos.css';
-    document.head.appendChild(photoStyles);
-    fetch(photoPage.source, { cache: 'force-cache' })
-      .then(response => response.ok ? response.text() : Promise.reject(new Error('photo unavailable')))
-      .then(encoded => {
-        const data = encoded.trim();
-        if (!data) return;
-        document.body.style.setProperty('--page-photo', `url("data:image/webp;base64,${data}")`);
-        document.body.classList.add(photoPage.className);
-      })
-      .catch(() => {});
+  const mediaConfig = COMPANY_MEDIA[normalizedPath];
+  if (mediaConfig) {
+    const host = document.querySelector('.page-hero .container');
+    if (host) {
+      const figure = document.createElement('figure');
+      figure.className = 'page-media';
+      figure.hidden = true;
+      figure.style.setProperty('--media-position', mediaConfig.position);
+
+      const image = document.createElement('img');
+      image.src = mediaConfig.src;
+      image.alt = mediaConfig.alt;
+      image.loading = 'eager';
+      image.decoding = 'async';
+      image.addEventListener('load', () => {
+        figure.hidden = false;
+        requestAnimationFrame(() => figure.classList.add('is-ready'));
+      }, { once: true });
+      image.addEventListener('error', () => figure.remove(), { once: true });
+
+      figure.appendChild(image);
+      host.appendChild(figure);
+    }
   }
 
   if (header && !header.classList.contains('is-solid')) {

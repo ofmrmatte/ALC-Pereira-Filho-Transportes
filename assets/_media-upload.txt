@@ -1,1 +1,0 @@
-Suba as imagens reais em assets/images/ com os nomes empresa-frota.jpg, operacao-frota.jpg e solucoes-frota.jpg.
