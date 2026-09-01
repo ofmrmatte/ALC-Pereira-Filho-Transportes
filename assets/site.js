@@ -17,9 +17,8 @@
     whatsapp: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12.04 2A9.84 9.84 0 0 0 3.6 16.9L2 22l5.24-1.54A9.96 9.96 0 1 0 12.04 2Zm0 17.95a8.03 8.03 0 0 1-4.1-1.12l-.3-.18-3.11.92.94-3.02-.2-.31a7.9 7.9 0 1 1 6.77 3.71Zm4.4-5.93c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.93-1.19a7.18 7.18 0 0 1-1.34-1.66c-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.1 3.62.57.25 1.02.39 1.37.5.58.18 1.1.16 1.51.1.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg>'
   };
 
-  // Ajustes globais compartilhados por todas as páginas, sem recarregar o CSS.
   const globalFixes = document.createElement('style');
-  globalFixes.dataset.siteFixes = '20260901-4';
+  globalFixes.dataset.siteFixes = '20260901-5';
   globalFixes.textContent = `
     @view-transition{navigation:auto}
     ::view-transition-old(root){animation:site-out .12s ease both}
@@ -42,6 +41,29 @@
   const menuButton = document.querySelector('.menu-btn');
   const mobileNav = document.querySelector('.mobile-nav');
   const pathname = location.pathname.replace(/index\.html$/, '') || '/';
+  const normalizedPath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
+
+  const PHOTO_PAGES = Object.freeze({
+    '/empresa/': { className: 'page-empresa', source: '/assets/images/empresa-frota-entardecer.webp.b64' },
+    '/operacao/': { className: 'page-operacao', source: '/assets/images/operacao-frota-alinhada.webp.b64' },
+    '/solucoes/': { className: 'page-solucoes', source: '/assets/images/solucoes-galpao-alc.webp.b64' }
+  });
+  const photoPage = PHOTO_PAGES[normalizedPath];
+  if (photoPage) {
+    const photoStyles = document.createElement('link');
+    photoStyles.rel = 'stylesheet';
+    photoStyles.href = '/assets/company-photos.css';
+    document.head.appendChild(photoStyles);
+    fetch(photoPage.source, { cache: 'force-cache' })
+      .then(response => response.ok ? response.text() : Promise.reject(new Error('photo unavailable')))
+      .then(encoded => {
+        const data = encoded.trim();
+        if (!data) return;
+        document.body.style.setProperty('--page-photo', `url("data:image/webp;base64,${data}")`);
+        document.body.classList.add(photoPage.className);
+      })
+      .catch(() => {});
+  }
 
   if (header && !header.classList.contains('is-solid')) {
     const updateHeader = () => header.classList.toggle('scrolled', scrollY > 28);
@@ -97,7 +119,6 @@
     a.href = `mailto:${CONFIG.email}?subject=${encodeURIComponent(subject)}`;
   });
 
-  // Pré-carrega páginas internas para reduzir a sensação de loading entre navegações.
   const prefetched = new Set();
   const prefetchPage = href => {
     try {
