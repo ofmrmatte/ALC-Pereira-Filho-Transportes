@@ -1,0 +1,42 @@
+/* Responsive */
+@media(max-width:1100px){
+  .nav{grid-template-columns:220px 1fr auto}.nav-links{gap:16px;font-size:.77rem}.nav-actions .icon-btn{display:none}
+  .hero-grid{grid-template-columns:1fr 260px;gap:38px}
+  .director-card{grid-template-columns:1fr}.director-photo{min-height:310px;height:310px}
+  .footer-main{grid-template-columns:1.1fr 1fr 1fr}.footer-main>div:first-child{grid-column:1/-1}
+}
+@media(max-width:920px){
+  .nav{grid-template-columns:1fr auto}.nav-links,.nav-actions{display:none}.menu-btn{display:grid;place-items:center}
+  .mobile-nav.open{display:flex;position:absolute;top:calc(84px + env(safe-area-inset-top));left:var(--pad);right:var(--pad);background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow);padding:10px;flex-direction:column}
+  .mobile-nav a{padding:13px 12px;border-bottom:1px solid var(--line);font-size:.82rem;font-weight:750}.mobile-nav a:last-child{border-bottom:0;color:var(--brand)}
+  .hero-grid,.page-hero-grid,.section-head,.dossier,.operation-layout,.timeline-layout,.mvv,.form-layout,.contact-layout,.career-grid{grid-template-columns:1fr}
+  .hero-facts{border-left:0;border-top:1px solid rgba(255,255,255,.2);padding:24px 0 0;grid-template-columns:repeat(3,1fr)}
+  .hero-fact{padding:0 16px 0 0;border-bottom:0;border-right:1px solid rgba(255,255,255,.14)}.hero-fact:last-child{border-right:0}
+  .section-head .lead{justify-self:start}.dossier-copy{padding:44px 0;border-right:0;border-bottom:1px solid var(--line)}.dossier-aside{padding:24px 0}
+  .operation-sticky,.timeline-intro,.form-aside{position:static}.metric-rail{max-width:650px}.page-index{display:none}
+  .mvv-main{padding:44px 0;border-right:0;border-bottom:1px solid var(--line)}.mvv-side article{padding-left:0}
+  .team-directory{grid-template-columns:repeat(2,1fr)}.value-list{grid-template-columns:repeat(2,1fr)}
+  .director-pair{grid-template-columns:1fr}.director-card{grid-template-columns:.75fr 1.25fr}.director-photo{height:auto;min-height:360px}
+  .service-row{grid-template-columns:60px 1fr 44px}.service-row p{grid-column:2}.footer-main{grid-template-columns:1fr 1fr}.footer-main>div:first-child{grid-column:1/-1}
+}
+@media(max-width:640px){
+  :root{--pad:16px}
+  .nav{height:72px}.brand img{width:58px;height:52px}.brand-copy{display:none}.mobile-nav.open{top:calc(72px + env(safe-area-inset-top))}
+  .hero-content{padding-top:calc(125px + env(safe-area-inset-top));padding-bottom:max(34px,calc(28px + env(safe-area-inset-bottom)))}
+  .hero .display{font-size:clamp(3rem,16vw,4.9rem)}.hero-grid{gap:34px}.hero-facts{grid-template-columns:1fr;gap:0}.hero-fact{padding:12px 0;border-right:0;border-bottom:1px solid rgba(255,255,255,.12)}.hero-foot{display:none}
+  .section{padding:76px 0}.section.tight{padding:58px 0}.section-head{gap:22px;margin-bottom:34px}
+  .service-row{grid-template-columns:44px 1fr 36px;gap:14px;padding:22px 0}.service-row p{grid-column:2/-1}.service-row .arrow{width:32px;height:32px}
+  .metric-rail{grid-template-columns:1fr}.metric-rail div{border-right:0;border-bottom:1px solid rgba(255,255,255,.14)}.metric-rail div:last-child{border-bottom:0}
+  .operation-board{padding:24px;min-height:500px}.route-line{grid-template-columns:92px 1fr;gap:10px}.route-line small{display:none}
+  .director-card{grid-template-columns:1fr}.director-photo{min-height:300px;height:300px}.director-body{padding:26px}
+  .timeline-layout{gap:38px}.timeline li{padding-left:32px}.timeline li:before{left:-7px}
+  .value-list,.team-directory,.org-summary{grid-template-columns:1fr}.org-summary div{border-right:0;border-bottom:1px solid var(--line)}.org-summary div:last-child{border-bottom:0}
+  .solution-trigger{grid-template-columns:44px 1fr 34px;gap:12px}.solution-content{grid-template-columns:44px 1fr}.solution-content>div{grid-template-columns:1fr;gap:22px}
+  .form-card{padding:22px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
+  .contact-row{grid-template-columns:1fr}.contact-row .open{display:none}.map-frame,.map-frame iframe{min-height:360px;height:360px}
+  .footer-main{grid-template-columns:1fr;gap:30px}.footer-main>div:first-child{grid-column:auto}.footer-bottom{flex-direction:column;align-items:flex-start}
+  .sac-float{right:14px;bottom:max(14px,calc(10px + env(safe-area-inset-bottom)))}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}*,*:before,*:after{animation:none!important;transition:none!important}[data-reveal]{opacity:1;transform:none}.hero-media video{display:none}
+}
