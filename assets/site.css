@@ -28,3 +28,7 @@ a[href^="tel:"],a[href^="mailto:"]{overflow-wrap:anywhere}
 @media(prefers-reduced-motion:reduce){
  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+.form-note a{color:var(--brand-deep);text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.form-feedback.show{overflow-wrap:anywhere}
+.form-open-link{color:var(--brand-deep);font-weight:800;text-decoration:underline;text-underline-offset:3px}
