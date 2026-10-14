@@ -2,7 +2,7 @@
 
 Site institucional multipágina da **ALC & Pereira Filho Transportes Ltda.**
 
-A aplicação foi reconstruída para funcionar como um portal corporativo de transporte e logística — não como landing page. O repositório `main` é a fonte oficial do projeto e deve alimentar a publicação na Vercel por integração Git.
+A aplicação foi reconstruída para funcionar como um portal corporativo de transporte e logística — não como landing page. O repositório `main` é a fonte oficial do projeto. A publicação acontece em um serviço próprio na **Railway**, dentro do mesmo projeto dos demais sistemas ALC, mas sem compartilhar processos, credenciais ou deploys.
 
 ## Arquitetura
 
@@ -48,13 +48,14 @@ Canais configurados:
 
 ## Desenvolvimento
 
-Projeto estático, sem etapa de build obrigatória.
+Site estático servido por um processo Node.js mínimo, sem dependências de runtime externas. Requer **Node.js 22 ou posterior**.
 
 ```bash
-python -m http.server 8080
+npm run check
+npm start
 ```
 
-Acesse `http://localhost:8080`.
+Acesse `http://localhost:3000/` e verifique `http://localhost:3000/health`. A porta é obtida de `PORT` na Railway; páginas e arquivos são limitados a uma lista pública permitida.
 
 ## Publicação
 
@@ -63,14 +64,16 @@ Fluxo definido:
 ```text
 GitHub main
     ↓
-Vercel via Git Integration
+Railway · projeto Inteligência ALC
     ↓
-Validação
+Serviço independente: ALC-Site-Institucional
     ↓
-Domínio institucional
+URL Railway para validação
+    ↓
+Domínio institucional (depois de DNS e aprovação)
 ```
 
-**Não usar deploy manual recorrente na Vercel.** Alterações devem ser versionadas neste repositório e publicadas pela sincronização Git.
+**Não publicar na Vercel.** Toda alteração deve ser versionada e validada por GitHub Actions antes da atualização do serviço próprio na Railway. Não vincular o domínio principal sem revisão dos registros DNS existentes.
 
 Enquanto a versão ainda estiver em validação, `robots.txt` e metatags mantêm a indexação bloqueada. Antes da publicação definitiva, remover `noindex,nofollow` e liberar o `robots.txt`.
 
