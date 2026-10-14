@@ -34,7 +34,6 @@ jobs:
           test -f assets/site.js
           test -f assets/brand/logo.svg
           test -f README.md
-          test -f vercel.json
           test -f robots.txt
 
       - name: Setup Node.js
@@ -66,7 +65,7 @@ jobs:
           grep -q 'assets/brand/logo.svg' index.html
           grep -q 'Matheus Ferreira' index.html
           grep -q 'Matheus Ferreira' README.md
-          grep -q 'X-Robots-Tag' vercel.json
+          grep -q 'X-Robots-Tag' server.mjs
 
       - name: Validate no prototype copy remains
         shell: bash
