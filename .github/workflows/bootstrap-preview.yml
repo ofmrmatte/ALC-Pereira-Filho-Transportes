@@ -40,6 +40,9 @@ jobs:
       - name: Validate JavaScript
         run: node --check assets/site.js
 
+      - name: Validate routes, assets, accessibility and forms
+        run: node scripts/validate-site.mjs
+
       - name: Validate functional surfaces
         shell: bash
         run: |
