@@ -32,3 +32,28 @@ a[href^="tel:"],a[href^="mailto:"]{overflow-wrap:anywhere}
 .form-note a{color:var(--brand-deep);text-decoration:underline;text-underline-offset:3px;font-weight:700}
 .form-feedback.show{overflow-wrap:anywhere}
 .form-open-link{color:var(--brand-deep);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+
+
+/* Refinamentos de navegação, acessibilidade e performance */
+.skip-link{position:fixed;left:16px;top:12px;z-index:9999;padding:12px 18px;background:#fff;color:var(--ink);border:2px solid var(--brand);border-radius:8px;transform:translateY(-170%);transition:transform .14s ease;font-size:.82rem;font-weight:800}
+.skip-link:focus{transform:translateY(0)}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+:where(a,button):focus:not(:focus-visible){outline:none}
+:where(input,select,textarea){max-width:100%}
+.hero-media{background:#151719 url("/assets/images/frota/alc-frota-operacao.jpg") center 56% / cover no-repeat}
+.hero-media video{opacity:0;transition:opacity .8s ease}
+.hero-media video.is-playing{opacity:1}
+.hero-fact strong{font-variant-numeric:tabular-nums}
+[data-reveal]{scroll-margin-top:100px}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+ .hero-media video{display:none}
+}
+@media(max-width:640px){
+ .hero-grid{gap:26px}
+ .hero-content{padding-top:calc(136px + env(safe-area-inset-top))}
+ .hero-media{background-position:66% center}
+ .hero .display{font-size:clamp(2.7rem,10.7vw,4.5rem);line-height:1.01}
+ .hero .lead{line-height:1.55}
+}
