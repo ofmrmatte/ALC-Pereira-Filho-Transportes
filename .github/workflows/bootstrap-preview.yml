@@ -37,8 +37,16 @@ jobs:
           test -f vercel.json
           test -f robots.txt
 
-      - name: Validate JavaScript
-        run: node --check assets/site.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate JavaScript and Railway routes
+        run: npm run check
+
+      - name: Validate routes, assets, accessibility and forms
+        run: node scripts/validate-site.mjs
 
       - name: Validate functional surfaces
         shell: bash

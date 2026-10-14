@@ -4,29 +4,12 @@
     email: 'comercial@alcepereirafilho.com.br',
     portfolio: 'https://ofmrmatte.vercel.app/',
     socials: {
-      facebook: 'https://web.facebook.com/alcepereirafilhotransportes?_rdc=1&_rdr#',
+      facebook: 'https://web.facebook.com/alcepereirafilhotransportes',
       instagram: 'https://www.instagram.com/alcepereirafilhotransportes',
-      linkedin: 'https://www.linkedin.com/company/alcepereirafilhotransportes/posts/?feedView=all'
+      linkedin: 'https://www.linkedin.com/company/alcepereirafilhotransportes/'
     }
   });
 
-  const COMPANY_MEDIA = Object.freeze({
-    '/empresa/': {
-      src: '/assets/images/frota/alc-frota-entardecer.jpg',
-      alt: 'Frota da ALC & Pereira Filho Transportes ao entardecer',
-      position: 'center 55%'
-    },
-    '/operacao/': {
-      src: '/assets/images/frota/alc-frota-patio.jpg',
-      alt: 'Frota operacional da ALC & Pereira Filho Transportes alinhada no pátio',
-      position: 'center 52%'
-    },
-    '/solucoes/': {
-      src: '/assets/images/frota/alc-frota-operacao.jpg',
-      alt: 'Caminhões da ALC & Pereira Filho Transportes em área de operação logística',
-      position: 'center 50%'
-    }
-  });
 
   const icons = {
     facebook: '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5H17V4a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3V10H7.5v3h2.8v8h3.4Z"/></svg>',
@@ -67,36 +50,29 @@
   `;
   document.head.appendChild(globalFixes);
 
+  // Preserve a fast image-first hero; stream decorative video only when
+  // users have not requested reduced motion or data saving.
+  const heroVideo = document.querySelector('[data-hero-video]');
+  if (heroVideo && !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+      !navigator.connection?.saveData && window.matchMedia('(min-width: 740px)').matches) {
+    const playHero = () => {
+      const source = heroVideo.querySelector('source[data-src]');
+      if (!source) return;
+      source.src = source.dataset.src;
+      delete source.dataset.src;
+      heroVideo.load();
+      heroVideo.play().then(() => heroVideo.classList.add('is-playing')).catch(() => {});
+    };
+    if ('requestIdleCallback' in window) window.requestIdleCallback(playHero, { timeout: 2500 });
+    else window.setTimeout(playHero, 1100);
+  }
+
   const header = document.querySelector('.site-header');
   const menuButton = document.querySelector('.menu-btn');
   const mobileNav = document.querySelector('.mobile-nav');
   const pathname = location.pathname.replace(/index\.html$/, '') || '/';
   const normalizedPath = pathname === '/' ? '/' : `${pathname.replace(/\/+$/, '')}/`;
 
-  const mediaConfig = COMPANY_MEDIA[normalizedPath];
-  if (mediaConfig) {
-    const host = document.querySelector('.page-hero .container');
-    if (host) {
-      const figure = document.createElement('figure');
-      figure.className = 'page-media';
-      figure.hidden = true;
-      figure.style.setProperty('--media-position', mediaConfig.position);
-
-      const image = document.createElement('img');
-      image.src = mediaConfig.src;
-      image.alt = mediaConfig.alt;
-      image.loading = 'eager';
-      image.decoding = 'async';
-      image.addEventListener('load', () => {
-        figure.hidden = false;
-        requestAnimationFrame(() => figure.classList.add('is-ready'));
-      }, { once: true });
-      image.addEventListener('error', () => figure.remove(), { once: true });
-
-      figure.appendChild(image);
-      host.appendChild(figure);
-    }
-  }
 
   if (header && !header.classList.contains('is-solid')) {
     const updateHeader = () => header.classList.toggle('scrolled', scrollY > 28);
@@ -108,23 +84,33 @@
     const href = new URL(a.href, location.origin).pathname.replace(/index\.html$/, '');
     const match = href === '/' ? pathname === '/' : pathname.startsWith(href);
     a.classList.toggle('active', match);
+    if (match) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
   });
 
   if (mobileNav) mobileNav.hidden = true;
   if (menuButton && mobileNav) {
-    menuButton.addEventListener('click', () => {
-      const open = mobileNav.hidden;
+    const setMenu = open => {
       mobileNav.hidden = !open;
       mobileNav.classList.toggle('open', open);
       menuButton.setAttribute('aria-expanded', String(open));
+      menuButton.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
       menuButton.textContent = open ? '×' : '☰';
+    };
+    menuButton.addEventListener('click', () => setMenu(mobileNav.hidden));
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !mobileNav.hidden) {
+        setMenu(false);
+        menuButton.focus();
+      }
     });
-    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      mobileNav.hidden = true;
-      mobileNav.classList.remove('open');
-      menuButton.setAttribute('aria-expanded', 'false');
-      menuButton.textContent = '☰';
-    }));
+    document.addEventListener('click', event => {
+      if (!mobileNav.hidden && !header.contains(event.target)) setMenu(false);
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 920 && !mobileNav.hidden) setMenu(false);
+    }, { passive: true });
   }
 
   document.querySelectorAll('[data-social]').forEach(a => {
@@ -184,8 +170,10 @@
   const warmNavigation = () => {
     document.querySelectorAll('.nav-links a,.mobile-nav a,.btn[href^="/"],.mini-btn[href^="/"]').forEach(a => prefetchPage(a.href));
   };
-  if ('requestIdleCallback' in window) requestIdleCallback(warmNavigation, { timeout: 1200 });
-  else setTimeout(warmNavigation, 350);
+  // Do not prefetch the whole website on limited mobile connections.
+  if (!navigator.connection?.saveData && window.innerWidth > 920) {
+    if ('requestIdleCallback' in window) requestIdleCallback(warmNavigation, { timeout: 2000 });
+  }
 
   const encodeForm = form => Object.fromEntries(new FormData(form).entries());
   const clean = value => String(value || '').trim();
@@ -237,11 +225,24 @@
       if (!form.reportValidity()) return;
       const data = encodeForm(form);
       const message = buildMessage(data);
-      window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}`;
       if (feedback) {
-        feedback.textContent = 'O WhatsApp foi aberto com as informações preenchidas. Revise a mensagem e confirme o envio.';
+        feedback.textContent = 'Confira os dados na conversa do WhatsApp e confirme manualmente o envio. Este site não armazena a solicitação.';
         feedback.classList.add('show');
       }
+      // A direct user gesture opens WhatsApp. If pop-ups are blocked, retain
+      // an accessible manual link rather than claiming the message was sent.
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'Abrir mensagem no WhatsApp';
+      link.className = 'form-open-link';
+      if (feedback) {
+        feedback.querySelector('.form-open-link')?.remove();
+        feedback.append(document.createTextNode(' '), link);
+      }
+      link.click();
     });
 
     const emailButton = form.querySelector('[data-form-email]');

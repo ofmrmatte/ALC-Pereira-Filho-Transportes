@@ -1,0 +1,15 @@
+{
+  "name": "alc-pereira-filho-transportes-site",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Site institucional ALC & Pereira Filho, servido de forma independente na Railway.",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check server.mjs && node --check assets/site.js && node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22 <25"
+  }
+}
