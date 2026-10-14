@@ -2,7 +2,7 @@
 
 Site institucional multipágina da **ALC & Pereira Filho Transportes Ltda.**
 
-A aplicação foi reconstruída para funcionar como um portal corporativo de transporte e logística — não como landing page. O repositório `main` é a fonte oficial do projeto e deve alimentar a publicação na Vercel por integração Git.
+A aplicação foi reconstruída para funcionar como um portal corporativo de transporte e logística — não como landing page. O repositório `main` é a fonte oficial do projeto. O site será publicado na **Railway**, no mesmo projeto ALC dos demais sistemas, porém em serviço próprio independente.
 
 ## Arquitetura
 
@@ -48,13 +48,14 @@ Canais configurados:
 
 ## Desenvolvimento
 
-Projeto estático, sem etapa de build obrigatória.
+Site estático servido por Node.js 22+, com servidor de baixa dependência e healthcheck.
 
 ```bash
-python -m http.server 8080
+npm run check
+npm start
 ```
 
-Acesse `http://localhost:8080`.
+Acesse `http://localhost:3000/` e verifique `/health`.
 
 ## Publicação
 
@@ -63,14 +64,14 @@ Fluxo definido:
 ```text
 GitHub main
     ↓
-Vercel via Git Integration
+Railway · serviço ALC-Site-Institucional
     ↓
 Validação
     ↓
 Domínio institucional
 ```
 
-**Não usar deploy manual recorrente na Vercel.** Alterações devem ser versionadas neste repositório e publicadas pela sincronização Git.
+**Não utilizar Vercel para hospedar este site.** Manter deploy automático na Railway pela branch `main`, com serviço isolado, e preservar o DNS oficial até aprovação.
 
 Enquanto a versão ainda estiver em validação, `robots.txt` e metatags mantêm a indexação bloqueada. Antes da publicação definitiva, remover `noindex,nofollow` e liberar o `robots.txt`.
 
