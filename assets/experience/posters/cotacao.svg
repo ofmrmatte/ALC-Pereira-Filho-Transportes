@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#eeece5"/><path d="M0 420h1200v180H0Z" fill="#cfcdc6"/>
+  <path d="M150 420h900v22H150z" fill="#63686b"/><path d="M210 380h780" stroke="#e30613" stroke-width="15"/>
+  <g fill="#f7f6f0" stroke="#74797b" stroke-width="8"><rect x="150" y="210" width="240" height="170" rx="14"/><rect x="810" y="210" width="240" height="170" rx="14"/></g>
+  <path d="M390 290h420" fill="none" stroke="#e30613" stroke-width="13" stroke-dasharray="28 18"/>
+  <g fill="#f2f0e9" stroke="#34383a" stroke-width="8"><rect x="470" y="260" width="230" height="125" rx="14"/><path d="M700 300h100v85H700z"/></g>
+  <g fill="#34383a"><circle cx="525" cy="405" r="34"/><circle cx="733" cy="405" r="34"/></g>
+  <text x="270" y="300" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="#18191b" text-anchor="middle">ORIGEM</text><text x="930" y="300" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="#18191b" text-anchor="middle">DESTINO</text>
+</svg>

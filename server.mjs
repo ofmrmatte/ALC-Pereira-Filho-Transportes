@@ -14,6 +14,7 @@ const TYPES = Object.freeze({
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
+  ".glb": "model/gltf-binary",
   ".ico": "image/x-icon",
   ".txt": "text/plain; charset=utf-8",
   ".xml": "application/xml; charset=utf-8",
@@ -26,8 +27,16 @@ const SECURITY = Object.freeze({
   "X-Frame-Options": "DENY",
   "X-Robots-Tag": "noindex, nofollow",
 });
-const exposedAsset = path => path === "/favicon.svg" || path === "/robots.txt" ||
-  path.startsWith("/assets/") && !/\/(?:\.|README|.*\.tmp$)/i.test(path);
+const exposedAsset = path => {
+  if (path === "/favicon.svg" || path === "/robots.txt") return true;
+  if (path.startsWith("/assets/experience/")) {
+    return path === "/assets/experience/experience.css" ||
+      path === "/assets/experience/runtime.js" ||
+      /^\/assets\/experience\/posters\/[a-z0-9-]+\.(?:svg|png|webp|jpeg)$/i.test(path) ||
+      /^\/assets\/experience\/models\/[a-z0-9-]+\.glb$/i.test(path);
+  }
+  return path.startsWith("/assets/") && !/\/(?:\.|README|.*\.tmp$)/i.test(path);
+};
 
 export function createSiteServer() {
   return createServer(async (request, response) => {
@@ -56,7 +65,6 @@ export function createSiteServer() {
       return;
     }
     const route = pathname === "/" ? "/index.html" : pathname.endsWith("/") ? pathname + "index.html" : pathname;
-    const isPage = route.endsWith(".html") || !extname(route);
     // Only the public pages and static assets may be served; never expose GitHub,
     // configuration, source files, tests, internal docs or private notes.
     const allowedPage = route === "/index.html" || route === "/404.html" ||
@@ -67,23 +75,33 @@ export function createSiteServer() {
       send(404, { "Content-Type": TYPES[".html"], "Cache-Control": "no-store" }, error);
       return;
     }
-    const target = resolve(ROOT, "." + file);
+    const target = resolve(ROOT, "." + file + (extname(file) === ".glb" ? ".gz" : ""));
     if (relative(ROOT, target).startsWith("..") || target === ROOT || !target.startsWith(ROOT + sep)) {
       send(403, { "Content-Type": "text/plain; charset=utf-8" }, "Acesso negado");
       return;
     }
     try {
       const result = await stat(target);
-      if (!result.isFile()) throw new Error("not file");
+      if (!result.isFile()) {
+        const error = await readFile(resolve(ROOT, "404.html"));
+        send(404, { "Content-Type": TYPES[".html"], "Cache-Control": "no-store" }, error);
+        return;
+      }
       const body = await readFile(target);
       send(200, {
-        "Content-Type": TYPES[extname(target)],
+        "Content-Type": TYPES[extname(file)],
         "Content-Length": body.byteLength,
+        ...(extname(file) === ".glb" ? { "Content-Encoding": "gzip" } : {}),
         "Cache-Control": extname(target) === ".html" ? "no-store" : "public, max-age=3600",
       }, body);
-    } catch {
-      const error = await readFile(resolve(ROOT, "404.html"));
-      send(404, { "Content-Type": TYPES[".html"], "Cache-Control": "no-store" }, error);
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        const notFound = await readFile(resolve(ROOT, "404.html"));
+        send(404, { "Content-Type": TYPES[".html"], "Cache-Control": "no-store" }, notFound);
+        return;
+      }
+      console.error(`Falha ao servir ${file}.`, error);
+      send(500, { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" }, "Falha ao servir a página.");
     }
   });
 }

@@ -5,9 +5,18 @@
   "type": "module",
   "description": "Site institucional ALC & Pereira Filho, servido de forma independente na Railway.",
   "scripts": {
+    "build": "node scripts/build-experience.mjs",
+    "prestart": "npm run build",
     "start": "node server.mjs",
-    "test": "node --test tests/*.test.mjs",
-    "check": "node --check server.mjs && node --check assets/site.js && node --test tests/*.test.mjs"
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "check": "node --check server.mjs && node --check assets/site.js && npm test"
+  },
+  "dependencies": {
+    "gsap": "3.15.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   },
   "engines": {
     "node": ">=22 <25"

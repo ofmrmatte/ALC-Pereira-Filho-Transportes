@@ -2,7 +2,7 @@
   const CONFIG = Object.freeze({
     whatsapp: '5511978341558',
     email: 'comercial@alcepereirafilho.com.br',
-    portfolio: 'https://ofmrmatte.vercel.app/',
+    portfolio: 'https://ofmrmatte-production.up.railway.app',
     socials: {
       facebook: 'https://web.facebook.com/alcepereirafilhotransportes',
       instagram: 'https://www.instagram.com/alcepereirafilhotransportes',
@@ -44,11 +44,60 @@
     @media(max-width:640px){
       .page-media{margin-top:28px;aspect-ratio:4/3}
     }
+    .hero{--hero-scroll:0;perspective:1600px}
+    .hero-media img{
+      transform:scale(calc(1.08 + var(--hero-scroll) * .18)) translate3d(0, calc(var(--hero-scroll) * -22px), 0);
+      filter:saturate(.82) contrast(1.04) brightness(.8);
+      transition:transform .18s linear,filter .18s linear;
+    }
+    .hero .hero-grid,
+    .hero .hero-facts,
+    .hero .hero-content{
+      transform:translate3d(0, calc(var(--hero-scroll) * 20px), 0);
+      transition:transform .18s linear;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,rgba(17,18,20,.16) 0%,rgba(17,18,20,.1) 28%,rgba(17,18,20,.34) 100%);
+      pointer-events:none;
+      transform:translate3d(0, calc(var(--hero-scroll) * -12px), 0);
+    }
+    [data-reveal]{
+      opacity:0;
+      transform:translate3d(0,32px,0) scale(.985);
+      transition:opacity .55s ease,transform .55s ease;
+    }
+    [data-reveal].visible{
+      opacity:1;
+      transform:none;
+    }
+    @media(max-width:920px){
+      .hero-media img{transform:scale(1.06) translate3d(0, calc(var(--hero-scroll) * -12px), 0)}
+      .hero .hero-grid,.hero .hero-facts,.hero .hero-content{transform:none}
+    }
     @media(prefers-reduced-motion:reduce){
-      .page-media{transition:none;transform:none}
+      .page-media, .hero-media img, .hero .hero-grid, .hero .hero-facts, .hero .hero-content{transition:none;transform:none}
     }
   `;
   document.head.appendChild(globalFixes);
+  const experienceStyles = document.createElement('link');
+  experienceStyles.rel = 'stylesheet';
+  experienceStyles.href = '/assets/experience/experience.css';
+  document.head.appendChild(experienceStyles);
+
+  const syncScrollScene = () => {
+    const hero = document.querySelector('.hero');
+    const pageHero = document.querySelector('.page-hero');
+    const ratio = Math.min(Math.max((window.scrollY || 0) / Math.max(window.innerHeight, 1), 0), 1.8);
+    document.documentElement.style.setProperty('--hero-scroll', ratio.toFixed(4));
+    if (hero) hero.style.setProperty('--hero-scroll', ratio.toFixed(4));
+    if (pageHero) pageHero.style.setProperty('--hero-scroll', (ratio * 0.7).toFixed(4));
+  };
+  syncScrollScene();
+  addEventListener('scroll', syncScrollScene, { passive: true });
+  addEventListener('resize', syncScrollScene, { passive: true });
 
   // Preserve a fast image-first hero; stream decorative video only when
   // users have not requested reduced motion or data saving.
@@ -88,14 +137,46 @@
     else a.removeAttribute('aria-current');
   });
 
-  if (mobileNav) mobileNav.hidden = true;
+  if (mobileNav) {
+    const destinations = [
+      ['/trabalhe-conosco/', 'Trabalhe conosco'],
+      ['/privacidade/', 'Privacidade']
+    ];
+    destinations.forEach(([href, label]) => {
+      if (![...mobileNav.querySelectorAll('a')].some(link => link.pathname === href)) {
+        const link = document.createElement('a');
+        link.href = href;
+        link.dataset.nav = '';
+        link.textContent = label;
+        mobileNav.append(link);
+      }
+    });
+    mobileNav.hidden = true;
+  }
   if (menuButton && mobileNav) {
+    let previousFocus = null;
+    let savedScrollY = 0;
     const setMenu = open => {
+      if (open === !mobileNav.hidden) return;
+      if (open) {
+        previousFocus = document.activeElement;
+        savedScrollY = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${savedScrollY}px`;
+        document.body.style.width = '100%';
+      } else {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo({ top: savedScrollY, behavior: 'instant' });
+      }
       mobileNav.hidden = !open;
       mobileNav.classList.toggle('open', open);
       menuButton.setAttribute('aria-expanded', String(open));
       menuButton.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
       menuButton.textContent = open ? '×' : '☰';
+      if (open) mobileNav.querySelector('a')?.focus();
+      else if (previousFocus instanceof HTMLElement) previousFocus.focus();
     };
     menuButton.addEventListener('click', () => setMenu(mobileNav.hidden));
     mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
@@ -103,6 +184,20 @@
       if (event.key === 'Escape' && !mobileNav.hidden) {
         setMenu(false);
         menuButton.focus();
+        return;
+      }
+      if (event.key === 'Tab' && !mobileNav.hidden) {
+        const focusable = [...mobileNav.querySelectorAll('a[href],button:not([disabled])')];
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     });
     document.addEventListener('click', event => {
@@ -130,7 +225,7 @@
   });
 
   document.querySelectorAll('.signature').forEach(signature => {
-    signature.innerHTML = `Desenvolvido por <a href="${CONFIG.portfolio}" target="_blank" rel="noopener noreferrer" aria-label="Portfólio ofmrmatte">ofmrmatte</a> • 2026`;
+    signature.innerHTML = `Desenvolvido por <a href="${CONFIG.portfolio}" target="_blank" rel="noopener noreferrer">Matheus Ferreira</a> • 2026`;
   });
 
   document.querySelectorAll('[data-email]').forEach(a => {
@@ -281,25 +376,24 @@
   const initialTeamFilter = filterButtons.find(button => button.classList.contains('active')) || filterButtons[0];
   if (initialTeamFilter) applyTeamFilter(initialTeamFilter.dataset.teamFilter);
 
-  const reveal = document.querySelectorAll('[data-reveal]');
-  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { threshold: .08 });
-    reveal.forEach(el => io.observe(el));
-  } else {
-    reveal.forEach(el => el.classList.add('visible'));
-  }
+  document.querySelectorAll('[data-reveal]').forEach(el => el.classList.add('visible'));
 })();
 
 (() => {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = '/assets/company-backgrounds.css?v=20260901-2';
-  document.head.appendChild(link);
+  import('/assets/experience/runtime.js').catch(error => {
+    document.querySelector('.experience')?.classList.add('is-static');
+    document.querySelectorAll('.scene-copy').forEach(panel => {
+      panel.classList.add('is-active');
+      panel.removeAttribute('aria-hidden');
+      panel.inert = false;
+      panel.querySelector('.static-art')?.removeAttribute('hidden');
+    });
+    document.querySelectorAll('[data-scene]').forEach(host => {
+      const fallback = host.querySelector('.experience-fallback') || document.createElement('p');
+      fallback.className = 'page-stage-error';
+      fallback.textContent = 'A visualização 3D não pôde ser carregada. O conteúdo e os contatos continuam disponíveis.';
+      host.append(fallback);
+    });
+    console.error('ALC 3D: falha ao iniciar o módulo local da experiência.', error);
+  });
 })();

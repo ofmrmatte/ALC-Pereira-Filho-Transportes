@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#e9e7e0"/><path d="M0 448h1200v152H0Z" fill="#ceccc5"/>
+  <g fill="none" stroke="#818588" stroke-width="12"><path d="M230 340 420 230l180 130 190-170 180 125"/><path d="M320 450 420 230M600 360 790 190M780 360 970 315"/></g>
+  <g fill="#f8f7f3" stroke="#707679" stroke-width="8"><rect x="175" y="296" width="110" height="112" rx="12"/><rect x="365" y="184" width="110" height="112" rx="12"/><rect x="545" y="312" width="110" height="112" rx="12"/><rect x="735" y="145" width="110" height="112" rx="12"/><rect x="915" y="270" width="110" height="112" rx="12"/></g>
+  <g fill="#e30613"><rect x="185" y="296" width="90" height="18"/><rect x="375" y="184" width="90" height="18"/><rect x="555" y="312" width="90" height="18"/><rect x="745" y="145" width="90" height="18"/><rect x="925" y="270" width="90" height="18"/></g>
+  <text x="600" y="540" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#4c5053" text-anchor="middle" letter-spacing="6">REPRESENTAÇÃO CONCEITUAL · SEM COORDENADAS GEOGRÁFICAS</text>
+</svg>

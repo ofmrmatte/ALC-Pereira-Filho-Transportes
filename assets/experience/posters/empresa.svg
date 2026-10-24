@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#efeee8"/><path d="M0 440 1200 365v235H0Z" fill="#d0cec7"/>
+  <path d="M90 474h1020" stroke="#e30613" stroke-width="14"/>
+  <g fill="#faf9f5" stroke="#72777a" stroke-width="10"><path d="M180 210h230v240H180z"/><path d="M485 142h230v308H485z"/><path d="M790 82h230v368H790z"/></g>
+  <g fill="#e30613"><path d="M208 238h174v20H208z"/><path d="M513 170h174v20H513z"/><path d="M818 110h174v20H818z"/></g>
+  <g fill="#8c8d89"><path d="M205 390h180v20H205z"/><path d="M510 390h180v20H510z"/><path d="M815 390h180v20H815z"/></g>
+  <text x="300" y="320" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="#18191b" text-anchor="middle">2015</text>
+  <text x="600" y="280" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="#18191b" text-anchor="middle">2019</text>
+  <text x="900" y="230" font-family="Arial,sans-serif" font-size="48" font-weight="700" fill="#18191b" text-anchor="middle">HOJE</text>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Ilustração conceitual da traseira aberta de um caminhão baú com carga apoiada">
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1">
+      <stop stop-color="#e8e6df"/>
+      <stop offset="1" stop-color="#c9c7bf"/>
+    </linearGradient>
+    <linearGradient id="floor" x2="0" y2="1">
+      <stop stop-color="#8a8c8b"/>
+      <stop offset="1" stop-color="#505356"/>
+    </linearGradient>
+    <linearGradient id="door" x2="1" y2="1">
+      <stop stop-color="#f5f3ed"/>
+      <stop offset="1" stop-color="#c6c6c1"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="#e9e8e2"/>
+  <path d="M0 516 600 355l600 161v284H0Z" fill="url(#floor)"/>
+  <path d="m300 166 600 0 116 373H184Z" fill="#292d30"/>
+  <path d="m340 187 520 0 81 326H259Z" fill="url(#wall)"/>
+  <path d="m362 212 477 0 63 275H299Z" fill="#666b6d"/>
+  <path d="m382 229 438 0 47 237H335Z" fill="#c9c7bf"/>
+  <path d="m304 169 39 2-63 367-42-3Z" fill="url(#door)"/>
+  <path d="m855 169 39 2 71 364-42 3Z" fill="url(#door)"/>
+  <path d="M184 538h832l-34 30H216Z" fill="#9c9c97"/>
+  <g fill="#a87947" stroke="#6d5237" stroke-width="5">
+    <path d="m375 384 145-32 55 23-145 34Z"/><path d="m375 409 145-34v84l-145 37Z"/><path d="m520 377 55-2v83l-55 1Z"/>
+    <path d="m532 348 148-24 51 22-149 27Z"/><path d="m532 373 148-27v80l-148 34Z"/><path d="m680 349 51-3v80l-51 0Z"/>
+    <path d="m690 385 146-20 46 22-147 24Z"/><path d="m690 411 146-26v72l-146 32Z"/><path d="m836 387 46 0v72l-46 0Z"/>
+    <path d="m372 477 151-39 54 23-151 42Z"/><path d="m372 503 151-42v50l-151 40Z"/><path d="m523 461 54 0v50l-54 0Z"/>
+    <path d="m535 441 149-31 52 24-150 34Z"/><path d="m535 467 149-33v48l-149 37Z"/><path d="m684 438 52-3v48l-52 0Z"/>
+  </g>
+  <g fill="#e30613">
+    <path d="m447 384 10-2v116l-10 2Z"/><path d="m603 357 10-2v119l-10 2Z"/>
+    <path d="m758 383 10-2v112l-10 2Z"/><path d="m449 476 10-3v77l-10 3Z"/>
+  </g>
+  <path d="m110 607 980-14M70 685l1060-8" fill="none" stroke="#b8b5ad" stroke-width="5" opacity=".6"/>
+  <path d="M0 580h175v22H0m1025-22h175v22h-175" fill="#34383b"/>
+  <text x="600" y="736" fill="#fff" font-family="Manrope,Arial,sans-serif" font-size="25" font-weight="700" text-anchor="middle" letter-spacing="4">CENOGRAFIA 3D CONCEITUAL ALC</text>
+</svg>

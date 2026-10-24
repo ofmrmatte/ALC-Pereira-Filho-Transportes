@@ -1,3 +1,7 @@
 .DS_Store
 Thumbs.db
 .vercel
+/node_modules/
+/assets/experience/runtime.js
+/assets/experience/models/*.glb
+/assets/experience/models/*.glb.gz
